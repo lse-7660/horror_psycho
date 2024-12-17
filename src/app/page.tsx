@@ -8,6 +8,7 @@ export default function HomePage() {
             <Image
                 src="/images/pattern/image.png"
                 alt="background_HP100"
+                objectFit="contain"
                 width={500}
                 height={500}
             />

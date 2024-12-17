@@ -55,19 +55,27 @@ export default function GamePage() {
         return <div>Game data not found!</div>;
 
     return (
-        <div>
-            <h1>
+        <div className="flex flex-col inner w-full h-screen bg-[url('/images/pattern/image.png')]">
+            <h1 className="mb-4">
                 <Link href="/">logo</Link>
             </h1>
-            <p>{currentData.description}</p>
+            <p className="mb-[30px]">
+                {currentData.description}
+            </p>
+            <div className="max-w-[80%]">
+                <p className="text-3xl">"</p>
+                <p className="pl-5 break-keep">
+                    {currentData.script}
+                </p>
+                <p className="text-3xl text-right">"</p>
+            </div>
 
-            <img
+            {/* <img
                 src={currentData.image}
                 alt="Game scene"
-                className="w-full"
-            />
-            <div>
-                <p>{currentData.script}</p>
+                className="w-full h-full"
+            /> */}
+            <div className="flex flex-col justicy-center absolute bottom-[60px] left-1/2 -translate-x-1/2 w-full max-w-[350px] font-bold  ">
                 {currentData.choices.map(
                     (choice, index) => (
                         <button
@@ -75,6 +83,7 @@ export default function GamePage() {
                             onClick={() =>
                                 handleChoice(choice.next)
                             }
+                            className="py-[20px]"
                         >
                             {choice.text}
                         </button>
