@@ -3,6 +3,7 @@
 type Choice = {
     text: string;
     next: string;
+    required?: boolean;
 };
 
 type GameNode = {
@@ -17,6 +18,7 @@ type GameData = {
 };
 
 export const gameData: GameData = {
+    // 시작
     start: {
         script: '머리가 깨질 듯이 아프다. 밖에 너무 오래 있었나... 빨리 쵸미시로 돌아가야 한다. 차도 다니지 않고... 누구에게 연락해야 하지?',
         image: 'images/pattern/image.png',
@@ -105,6 +107,8 @@ export const gameData: GameData = {
             },
         ],
     },
+
+    // 모브 발소리
     step_sound: {
         description:
             '가까워지는 발소리에 레이겐이 눈을 뜬다. 그리고, 웅얼거리는 목소리. 이 목소리는...',
@@ -121,6 +125,8 @@ export const gameData: GameData = {
             },
         ],
     },
+
+    // 대답한다
     answer_to_mob: {
         description:
             '몸을 일으켜 밖으로 나가보니 모브가 서 있다. 모브는 레이겐을 바라보며 따라오라는 듯 손을 내민다.',
@@ -306,6 +312,88 @@ export const gameData: GameData = {
             {
                 text: 'Ending',
                 next: 'ending3',
+            },
+        ],
+    },
+    // 대답하지 않는다
+    donot_answer: {
+        description:
+            '모브의 목소리다. 뛰쳐나가려던 레이겐은 수상한 점을 발견하고 멈춘다.',
+        script: '...이렇게 늦은 시간에, 모브가 어떻게 여기에...?',
+        image: 'images/pattern/image.png',
+        choices: [
+            {
+                text: 'Click to proceed',
+                next: 'gakuran',
+            },
+        ],
+    },
+    gakuran: {
+        description: '모브의 목소리다.',
+        script: '게다가 교복 차림... 수상해. 저건 모브가 아니야.',
+        image: 'images/pattern/image.png',
+        choices: [
+            {
+                text: '조용히 빠져나가자.',
+                next: 'sneak_out',
+            },
+            {
+                text: '저게 사라질 때까지 기다리자.',
+                next: 'wait_til_gone',
+            },
+        ],
+    },
+    wait_til_gone: {
+        description:
+            '모브의 모습을 한 무언가가 사라질 때까지 조용히 기다리기로 한다. 하지만 그 때,',
+        image: 'images/pattern/image.png',
+        choices: [
+            {
+                text: 'Click to proceed',
+                next: 'bell_ringing',
+            },
+        ],
+    },
+    bell_ringing: {
+        description:
+            '레이겐의 주머니 안에서 벨소리가 울린다. 황급히 소리를 꺼 보지만 이미... ',
+        image: 'images/pattern/image.png',
+        choices: [
+            {
+                text: 'Ending',
+                next: 'ending2',
+            },
+        ],
+    },
+    // 뒷문으로 빠져나가기
+    sneak_out: {
+        description: '엉!',
+        image: 'images/pattern/image.png',
+        choices: [
+            {
+                text: 'Click to proceed',
+                next: 'run_from_house',
+            },
+            {
+                text: 'Click to proceed',
+                next: 'run_from_house_required',
+                required: true,
+            },
+            {
+                text: 'Click to proceed',
+                next: 'hide_in_warehouse',
+                required: true,
+            },
+        ],
+    },
+    run_from_house: {
+        description:
+            '레이겐의 주머니 안에서 벨소리가 울린다. 황급히 소리를 꺼 보지만 이미... ',
+        image: 'images/pattern/image.png',
+        choices: [
+            {
+                text: 'Ending',
+                next: 'ending2',
             },
         ],
     },

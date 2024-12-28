@@ -2,9 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* font style */
+
 :root {
     --background: #ffffff;
     --foreground: #171717;
+
+    --font-family-base: 'Pretendard', sans-serif;
+    --font-size-base: 17px;
+    --font-color-base: #ffffff;
+    --font-weight-base: 400;
+    --letter-spacing-base: 0px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,10 +22,19 @@
     }
 }
 
+@font-face {
+    font-family: 'Pretendard';
+    src: url(../app/font/Pretendard-Regular.woff);
+}
+
 body {
     color: var(--foreground);
     background: var(--background);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    color: var(--font-color-base);
+    font-weight: var(--font-weight-base);
+    letter-spacing: var(--letter-spacing-base);
 }
 
 .inner {

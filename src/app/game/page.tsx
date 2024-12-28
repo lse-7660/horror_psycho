@@ -1,13 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { gameData } from '../../data/gameData';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // useRouter를 사용하여 리디렉션
+import { useRouter } from 'next/navigation';
 import { endingData } from '@/data/endingData';
+import Link from 'next/link';
 
 export default function GamePage() {
     const [current, setCurrent] = useState('start');
-    const [ending, setEnding] = useState<string[]>(() => {
+    const [result, setResult] = useState<string[]>(() => {
         if (typeof window !== 'undefined') {
             return JSON.parse(
                 localStorage.getItem('gameResults') || '[]'
@@ -17,24 +17,35 @@ export default function GamePage() {
     });
     const [nextChoice, setNextChoice] = useState<
         string | null
-    >(null); // nextChoice 상태 추가
-    const router = useRouter(); // useRouter 훅 사용
+    >(null);
+    const [hasLookAround, setHasLookAround] =
+        useState(false); // look_around 여부 상태
+    const router = useRouter();
 
     const currentData = gameData[current];
 
-    // useEffect로 리디렉션 처리
+    // Check for "look_around" in gameResults
+    useEffect(() => {
+        const savedResults = JSON.parse(
+            localStorage.getItem('gameResults') || '[]'
+        );
+        if (savedResults.includes('look_around')) {
+            setHasLookAround(true);
+        }
+    }, []);
+
     useEffect(() => {
         if (nextChoice && nextChoice in endingData) {
             localStorage.setItem(
                 'gameEnding',
                 JSON.stringify([nextChoice])
             );
-            router.push('/endings'); // useRouter로 엔딩 페이지로 리디렉션
+            router.push('/endings');
         }
-    }, [nextChoice, router]); // nextChoice가 변경될 때마다 실행
+    }, [nextChoice, router]);
 
     const handleChoice = (next: string) => {
-        setEnding((prev) => {
+        setResult((prev) => {
             const updated = [...prev, next];
             localStorage.setItem(
                 'gameResults',
@@ -42,9 +53,9 @@ export default function GamePage() {
             );
 
             if (!(next in endingData)) {
-                setCurrent(next); // 엔딩이 아닌 경우에는 다음 노드로 이동
+                setCurrent(next);
             } else {
-                setNextChoice(next); // 엔딩인 경우 nextChoice를 설정
+                setNextChoice(next);
             }
 
             return updated;
@@ -54,41 +65,78 @@ export default function GamePage() {
     if (!currentData)
         return <div>Game data not found!</div>;
 
+    // Filter choices based on `required` field
+    const filteredChoices = (() => {
+        // Check if there is any `required: true` choice
+        const hasRequiredChoices = currentData.choices.some(
+            (choice) => choice.required
+        );
+
+        if (hasRequiredChoices) {
+            // If there are required choices, show them only if `look_around` is true
+            if (hasLookAround) {
+                return currentData.choices; // Show all choices if look_around is true
+            } else {
+                // Filter out `required: true` choices if `look_around` is not in localStorage
+                return currentData.choices.filter(
+                    (choice) => !choice.required
+                );
+            }
+        } else {
+            // If no required choices, show all choices
+            return currentData.choices;
+        }
+    })();
+
     return (
-        <div className="flex flex-col inner w-full h-screen bg-[url('/images/pattern/image.png')]">
+        <div className="flex flex-col inner w-full h-screen">
             <h1 className="mb-4">
-                <Link href="/">logo</Link>
+                <Link href="/" className="font-bold">
+                    LOGO
+                </Link>
             </h1>
-            <p className="mb-[30px]">
+            <p
+                className={`${
+                    currentData.description
+                        ? 'mb-[30px]'
+                        : 'hidden'
+                }`}
+            >
                 {currentData.description}
             </p>
-            <div className="max-w-[80%]">
+            <div
+                className={`${
+                    currentData.script
+                        ? 'flex max-w-[80%]'
+                        : 'hidden'
+                }`}
+            >
                 <p className="text-3xl">"</p>
-                <p className="pl-5 break-keep">
-                    {currentData.script}
-                </p>
-                <p className="text-3xl text-right">"</p>
+                <div className="flex place-items-end">
+                    <p className="px-2 py-5 break-keep">
+                        {currentData.script}
+                    </p>
+                    <p className="text-3xl text-right">"</p>
+                </div>
             </div>
 
-            {/* <img
-                src={currentData.image}
-                alt="Game scene"
-                className="w-full h-full"
-            /> */}
-            <div className="flex flex-col justicy-center absolute bottom-[60px] left-1/2 -translate-x-1/2 w-full max-w-[350px] font-bold  ">
-                {currentData.choices.map(
-                    (choice, index) => (
-                        <button
-                            key={index}
-                            onClick={() =>
-                                handleChoice(choice.next)
-                            }
-                            className="py-[20px]"
-                        >
-                            {choice.text}
-                        </button>
-                    )
-                )}
+            <img
+                src="/images/pattern/image.png"
+                alt="Background pattern"
+                className="absolute -z-50 inset-0 w-full h-full object-cover"
+            />
+            <div className="flex flex-col justicy-center absolute bottom-[60px] left-1/2 -translate-x-1/2 w-full max-w-[350px] font-bold">
+                {filteredChoices.map((choice, index) => (
+                    <button
+                        key={index}
+                        onClick={() =>
+                            handleChoice(choice.next)
+                        }
+                        className="py-[20px]"
+                    >
+                        {choice.text}
+                    </button>
+                ))}
             </div>
         </div>
     );

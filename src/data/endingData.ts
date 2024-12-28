@@ -11,7 +11,7 @@ export const endingData: { [key: string]: Ending } = {
         image: 'images/pattern/image.png',
     },
     ending2: {
-        description: 'Ending 2: 충직한 제자',
+        description: 'Ending 2: 좋은 제자 위대한 제자',
         image: 'images/pattern/image.png',
     },
     ending3: {

@@ -1,21 +1,27 @@
 'use client';
-import { useState } from 'react';
-import { endingData } from '../../data/endingData';
+import { useEffect, useState } from 'react';
+import { Ending, endingData } from '@/data/endingData';
 
-export default function EndingPage() {
-    const [showCollection, setShowCollection] =
-        useState(false);
+export default function EndingsPage() {
+    const [ending, setEnding] = useState<Ending | null>(
+        null
+    );
 
-    const results =
-        typeof window !== 'undefined'
-            ? JSON.parse(
-                  localStorage.getItem('gameEnding') || '[]'
-              )
-            : [];
+    useEffect(() => {
+        const savedEnding = JSON.parse(
+            localStorage.getItem('gameEnding') || '[]'
+        );
 
-    const handleCollectionToggle = () => {
-        setShowCollection((prev) => !prev);
-    };
+        if (savedEnding.length > 0) {
+            const endingKey = savedEnding[0]; // 첫 번째 엔딩 키 가져오기
+            const foundEnding = endingData[endingKey];
+            if (foundEnding) {
+                setEnding(foundEnding); // 해당 엔딩 데이터 설정
+            }
+        }
+    }, []);
+
+    if (!ending) return <div>No ending found!</div>;
 
     const handleRestart = () => {
         window.location.href = '/game'; // start 페이지로 리디렉션
@@ -23,51 +29,15 @@ export default function EndingPage() {
 
     return (
         <div>
-            <h1>Your Results</h1>
-            <button onClick={handleCollectionToggle}>
-                {showCollection
-                    ? 'Hide Collection'
-                    : 'Show Collection'}
-            </button>
+            <h1>Ending</h1>
+            <div>
+                <img
+                    src={ending.image}
+                    alt="Ending Image"
+                />
+                <p>{ending.description}</p>
+            </div>
             <button onClick={handleRestart}>Restart</button>
-
-            {showCollection && (
-                <div>
-                    <h2>Collection</h2>
-                    <ul>
-                        {results.map(
-                            (
-                                result: string,
-                                index: number
-                            ) => (
-                                <li key={index}>
-                                    <div>
-                                        <img
-                                            src={
-                                                endingData[
-                                                    result
-                                                ]?.image
-                                            }
-                                            alt={result}
-                                            style={{
-                                                width: '200px',
-                                            }}
-                                        />
-                                        <p>
-                                            {
-                                                endingData[
-                                                    result
-                                                ]
-                                                    ?.description
-                                            }
-                                        </p>
-                                    </div>
-                                </li>
-                            )
-                        )}
-                    </ul>
-                </div>
-            )}
         </div>
     );
 }

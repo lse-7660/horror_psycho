@@ -3,18 +3,24 @@ import Link from 'next/link';
 
 export default function HomePage() {
     return (
-        <div>
-            <h1 className="sr-only">Horror Psycho 100</h1>
-            <Image
+        <div className="h-screen ">
+            <div>
+                <h1>
+                    <span className="sr-only">
+                        Horror Psycho 100
+                    </span>
+                    <span>모브사이코 100 팬게임</span>
+                </h1>
+
+                <Link href="/game">
+                    <button>Click to start</button>
+                </Link>
+            </div>
+            <img
                 src="/images/pattern/image.png"
-                alt="background_HP100"
-                objectFit="contain"
-                width={500}
-                height={500}
+                alt="Background pattern"
+                className="absolute -z-50 inset-0 w-full h-full object-cover"
             />
-            <Link href="/game">
-                <button>Click to start</button>
-            </Link>
         </div>
     );
 }
